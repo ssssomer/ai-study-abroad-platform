@@ -10,15 +10,18 @@ type University = {
   level?: string;
 };
 
-export default function UniversityAutocomplete({
-  value,
-  onChange,
-  inputClass,
-}: {
-  value: string;
-  onChange: (value: string) => void;
-  inputClass: string;
-}) {
+function normalizeResults(input: unknown): University[] {
+  if (!Array.isArray(input)) return [];
+  return input
+    .map((item) => {
+      if (typeof item === "string") return { name: item };
+      if (item && typeof item === "object" && "name" in item) return item as University;
+      return null;
+    })
+    .filter((item): item is University => Boolean(item?.name));
+}
+
+export default function UniversityAutocomplete({ value, onChange, inputClass }: { value: string; onChange: (value: string) => void; inputClass: string }) {
   const [query, setQuery] = useState(value);
   const [results, setResults] = useState<University[]>([]);
   const [open, setOpen] = useState(false);
@@ -30,7 +33,7 @@ export default function UniversityAutocomplete({
 
   useEffect(() => {
     const text = query.trim();
-    if (text.length < 1) {
+    if (!text) {
       setResults([]);
       setOpen(false);
       return;
@@ -40,12 +43,10 @@ export default function UniversityAutocomplete({
     const timer = window.setTimeout(async () => {
       setLoading(true);
       try {
-        const response = await fetch(`/api/universities?q=${encodeURIComponent(text)}`, {
-          signal: controller.signal,
-        });
+        const response = await fetch(`/api/universities?q=${encodeURIComponent(text)}`, { signal: controller.signal });
         if (!response.ok) throw new Error("Search failed");
         const data = await response.json();
-        const items = Array.isArray(data?.results) ? data.results : [];
+        const items = normalizeResults(data?.results);
         setResults(items);
         setOpen(true);
         setActiveIndex(items.length ? 0 : -1);
@@ -57,7 +58,7 @@ export default function UniversityAutocomplete({
       } finally {
         setLoading(false);
       }
-    }, 180);
+    }, 160);
 
     return () => {
       window.clearTimeout(timer);
@@ -97,7 +98,7 @@ export default function UniversityAutocomplete({
   }
 
   return (
-    <div ref={wrapRef} className="relative z-30">
+    <div ref={wrapRef} className="relative z-40">
       <div className="relative">
         <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-[#93a39e]" />
         <input
@@ -118,7 +119,7 @@ export default function UniversityAutocomplete({
       </div>
 
       {open && query.trim() && (
-        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-50 max-h-80 overflow-y-auto rounded-2xl border border-[#dfe3dc] bg-white p-2 shadow-[0_20px_55px_rgba(35,67,58,.16)]">
+        <div className="absolute left-0 right-0 top-[calc(100%+8px)] z-[100] max-h-80 overflow-y-auto rounded-2xl border border-[#dfe3dc] bg-white p-2 shadow-[0_24px_70px_rgba(35,67,58,.2)]">
           {loading && results.length === 0 ? (
             <div className="px-4 py-5 text-sm text-[#7d8c87]">正在搜索高校…</div>
           ) : results.length > 0 ? (
@@ -139,9 +140,7 @@ export default function UniversityAutocomplete({
                   </div>
                   <div className="min-w-0 flex-1">
                     <div className="truncate text-sm font-semibold text-[#17362f]">{item.name}</div>
-                    <div className="mt-0.5 truncate text-xs text-[#8a9893]">
-                      {[item.province, item.city, item.level].filter(Boolean).join(" · ") || "中国大陆高校"}
-                    </div>
+                    <div className="mt-0.5 truncate text-xs text-[#8a9893]">{[item.province, item.city, item.level].filter(Boolean).join(" · ") || "中国大陆高校"}</div>
                   </div>
                   {selected && <Check className="h-4 w-4 shrink-0 text-[#2f6b5f]" />}
                 </button>
