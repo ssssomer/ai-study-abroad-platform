@@ -1,11 +1,37 @@
 # AI Study Abroad Platform — Codex Instructions
 
 ## Product vision
-Build an AI-powered end-to-end study abroad advisor and operating system. The platform should behave like a strong education-agency counsellor from the moment a student begins considering studying abroad through profile building, career planning, country and programme selection, applications, offers, relocation, housing, and early-career preparation.
+Build an AI-powered end-to-end study abroad advisor and operating system for students from mainland China. The platform should behave like a strong education-agency counsellor from the moment a student begins considering studying abroad through profile building, career planning, country and programme selection, applications, offers, relocation, housing, and early-career preparation.
 
 This is NOT primarily a university search product and NOT a document-writing website.
 
 Read `docs/product-blueprint.md` before implementing any major product feature.
+
+## Primary audience and language
+The primary user is a student applying from mainland China.
+
+Default product language: Simplified Chinese (`zh-CN`).
+Code, variable names, database fields and internal engineering terminology should remain in English.
+
+All user-facing explanations should be written in natural Chinese suitable for mainland applicants. Avoid literal translations of Western admissions terminology when a clearer Chinese expression exists.
+
+The product should understand common mainland-applicant context, including:
+- Chinese mainland universities and institution background
+- GPA / percentage / weighted average / ranking context
+- 985 / 211 / 双一流 context where relevant, without treating labels as deterministic admissions rules
+- IELTS / TOEFL / PTE and language preparation timelines
+- QS / Times / US News ranking preferences
+- Return-to-China employability and employer recognition
+- Overseas employability
+- Migration considerations where appropriate and current
+- Budget in RMB and destination currency
+- City preferences
+- Major switching
+- Foundation / diploma / pathway willingness
+- Domestic internship, research, competition and extracurricular evidence
+- Parents / family may participate in major financial and destination decisions
+
+Chinese university autocomplete and education-record entry should be first-class experiences.
 
 ## Core journey
 The product journey is:
@@ -111,6 +137,8 @@ After profile completion, generate a structured report across dimensions such as
 
 The assessment must identify the highest-leverage constraint before recommending schools.
 
+For mainland applicants, academic assessment should distinguish between facts and heuristics. Institution labels, GPA and ranking context can inform analysis, but the system must not pretend that 985/211/QS ranking alone determines admission outcomes.
+
 ## Career-first principle
 Do NOT force students to select a major at the beginning. The system should infer and compare suitable career / study directions based on profile evidence, interests, constraints and goals.
 
@@ -121,19 +149,22 @@ For each direction, explain:
 - Programming demand
 - Typical roles
 - Employability by relevant market
+- Return-to-China employability
 - Career mobility
 - Migration considerations where appropriate
 - Competition level
 - Preparation gaps
 
-Use qualitative labels such as `Best fit`, `Strong alternative`, `Possible with preparation`.
+Use qualitative labels such as `最匹配`, `强备选`, `需要补充准备` in the Chinese UI.
 
 ## University recommendation principle
 Country and programme selection should occur only after profile diagnosis and career planning.
 
-Programme recommendations should be grouped into `Reach`, `Target`, and `Safe` and explain why each programme is recommended.
+Programme recommendations should be grouped into `冲刺`, `主申`, and `保底` in the Chinese UI and explain why each programme is recommended.
 
 Do not present fabricated exact admission probabilities. Any scores are heuristic fit / competitiveness indicators unless backed by validated admissions data.
+
+When discussing rankings, explain the difference between ranking preference, programme quality, employer recognition, location and career fit. Do not optimise only for QS rank.
 
 ## Application package principle
 Each accepted programme becomes an Application with its own requirements and document package.
@@ -154,10 +185,10 @@ Target state: `Application Ready`.
 
 ## UX principle
 The platform should always answer four questions clearly:
-1. Where am I now?
-2. What are my biggest gaps?
-3. What should I do next?
-4. Why does this matter for my target pathway?
+1. 我现在是什么背景？
+2. 我最大的短板是什么？
+3. 我现在最应该做什么？
+4. 为什么这件事会影响我的目标？
 
 The dashboard should prioritise the top 3 next actions rather than showing every possible task.
 
@@ -185,4 +216,4 @@ Profile changes such as a new IELTS score, GPA update, internship, project, targ
 16. Career layer
 
 ## Naming
-Use clear English names in code. UI copy can later support multilingual display.
+Use clear English names in code. Default UI copy is Simplified Chinese. English UI can be added later as an optional locale, not the default experience.
