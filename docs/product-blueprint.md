@@ -1,81 +1,91 @@
-# StudyPath Product Blueprint
+# StudyPath 产品蓝图
 
-## Product definition
-StudyPath is an AI-powered end-to-end study abroad advisor and operating system. It should behave like a high-quality education agency counsellor from the student's first thought about studying abroad through career planning, profile building, country and programme selection, applications, offers, relocation and early career.
+## 产品定义
+StudyPath 是一个面向中国大陆学生的 AI 全流程留学规划与申请平台。它不是一个“帮学生搜学校”的网站，也不是一个“AI 写文书”的工具，而应该像一名优秀的留学顾问一样，从学生第一次产生留学想法开始，一直陪伴到职业方向、背景提升、国家和专业选择、选校、申请、Offer、签证、住宿、落地和早期职业发展。
 
-It is not primarily a university search tool and it is not a document-writing website.
+默认产品语言为简体中文。代码、数据库字段和内部工程命名继续使用英文。
 
-The student should enter facts once, keep their profile updated, and let the system continuously analyse, recommend, plan and generate downstream work from the same source of truth.
+## 主要用户
+主要服务中国大陆申请者，包括本科阶段考虑海外硕士、本科申请、转专业申请、以及需要长期背景提升规划的学生。
 
-## Core journey
+产品需要理解大陆申请者常见语境：
+- 中国大陆高校与院校背景
+- GPA、百分制均分、加权均分、专业排名
+- 985 / 211 / 双一流等背景标签，但不得把这些标签当成决定录取的唯一规则
+- 雅思、托福、PTE
+- QS / Times / US News 等排名偏好
+- 回国就业与雇主认可度
+- 海外就业机会
+- 移民倾向
+- 人民币预算与家庭决策
+- 转专业
+- Foundation / Diploma / Pathway 接受度
+- 国内实习、科研、竞赛、社团、志愿者和项目经历
 
-1. DISCOVER — Should I study abroad and what am I trying to achieve?
-2. PROFILE — What is my current background and evidence?
-3. PLAN — Which career directions fit me and what must I improve?
-4. SELECT — Which countries, universities and programmes form the right portfolio?
-5. PREPARE — What tests, experiences, skills and documents do I need?
-6. APPLY — Build application packages, CVs, statements and recommendations.
-7. TRACK — Track submissions, offers, conditions, scholarships and enrolment.
-8. PRE-DEPARTURE — Visa, housing, flights, banking, SIM, airport transfer and arrival.
-9. CAREER — Internships, local CV, graduate programmes and job search.
+## 核心旅程
 
-## Central domain object: Student Profile
+1. DISCOVER 探索 — 我为什么想留学？留学是否适合我？
+2. PROFILE 画像 — 我现在是什么背景？
+3. PLAN 规划 — 哪些职业和专业方向适合我？我还缺什么？
+4. SELECT 定方向与选校 — 哪些国家、专业和学校最适合我？
+5. PREPARE 准备 — 我要补英语、实习、技能、项目和哪些材料？
+6. APPLY 申请 — 建立申请组合，准备 CV、文书、推荐信和材料。
+7. TRACK 跟进 — 跟踪提交、补件、Offer、条件、奖学金与入学。
+8. PRE-DEPARTURE 行前 — 签证、住宿、机票、银行卡、电话卡、接机与落地。
+9. CAREER 职业 — 实习、本地 CV、Graduate Program 和求职。
 
-All downstream systems must read from StudentProfile rather than asking the student to re-enter the same facts.
+## 核心对象：Student Profile
+所有功能围绕同一份 Student Profile 展开。学生的信息只输入一次，后续 AI 分析、规划、选校和申请全部复用。
 
-StudentProfile should eventually contain:
-- Personal information and age
-- Current education level
-- Institution
-- Major
-- GPA / WAM and grading scale
-- Transcript and academic evidence
-- English tests
-- Internships
-- Employment
+Student Profile 最终应包含：
+- 基本信息与年龄
+- 当前学历
+- 学校
+- 专业
+- GPA / WAM / 均分 / grading scale
+- 成绩单与课程证据
+- 英语考试
+- 实习
+- 工作经历
 - Research
 - Projects
 - Awards
-- Clubs and extracurriculars
-- Volunteering
+- 社团与 extracurriculars
+- Volunteer
 - Leadership
 - Skills
 - Budget
 - Target countries
-- Migration preference
-- Return-home employment preference
-- Target industries and roles
-- Work-style preferences
-- Willingness to change field
-- Willingness to take foundation / diploma / pathway programmes
-- Ranking preference
-- City preference
-- Salary and career goals
+- 是否考虑移民
+- 是否考虑回国就业
+- 目标行业和职位
+- 工作偏好
+- 是否接受转专业
+- 是否接受 foundation / diploma / pathway
+- 排名偏好
+- 城市偏好
+- 薪资与职业目标
 - Documents
 
-## Stage 1: Student Profile Report
-
-After onboarding, generate a Student Profile Report with dimensions such as:
-- Academic strength
-- Quantitative background
-- English readiness
-- Work / internship experience
-- Research / project evidence
+## 第一阶段：Student Profile Report 背景诊断
+学生完成档案后，不直接推荐学校，而是先生成背景诊断：
+- 学术背景
+- 定量基础
+- 英语准备度
+- 实习 / 工作经历
+- Research / Project 证据
 - Technical skills
-- Leadership evidence
+- Leadership
 - Career clarity
 - Application readiness
 
-The report must diagnose the highest-leverage problem instead of jumping directly to university recommendations.
+系统必须指出最大瓶颈，例如：
+> 你现在最大的问题不是选校，而是职业方向不够清晰，并且缺少目标方向相关经历。
 
-Example insight:
-> Your biggest constraint is not university choice. It is unclear career direction and insufficient relevant experience.
+院校背景、985/211/双一流、均分等可以作为分析维度，但必须明确这是背景信息和启发式判断，不得伪装成精确录取规则。
 
-## Stage 2: Career direction analysis
-
-Do not require the student to know their desired major first. Infer and compare plausible directions from their evidence and preferences.
-
-Example directions:
+## 第二阶段：职业与专业方向分析
+不要要求学生一开始就知道自己想读什么专业。系统应该根据学生背景、兴趣、职业目标和限制反向推荐方向，例如：
 - Finance
 - Business Analytics
 - Data Analytics
@@ -86,68 +96,41 @@ Example directions:
 - Information Systems
 - Computer Science
 
-For each direction, explain:
-- What the field studies
-- Who it suits
-- Quantitative demand
-- Programming demand
-- Typical jobs
-- Typical salary ranges by market when reliable data exists
-- Future development paths
-- Return-home employability
-- Major destination-market employability
-- Transferability to other careers
-- Migration considerations where legally appropriate
-- Competition level
-- Preparation gaps
+中文 UI 使用：
+- 最匹配
+- 强备选
+- 需要补充准备
 
-Recommendation labels should be qualitative, for example:
-- Best fit
-- Strong alternative
-- Possible with preparation
+每个方向解释：学什么、适合谁、数学要求、编程要求、典型岗位、回国就业、海外就业、职业迁移能力、竞争程度、移民考虑和准备缺口。
 
-## Stage 3: Long-term career pathway
+## 第三阶段：长期发展路径
+学生选定方向后，展示 3–5 年发展路径，包括教育路径、入门岗位、中期岗位、技能、目标雇主、证书、实习策略和有可靠数据支持时的薪资变化。
 
-For an accepted career direction, show a 3–5 year development pathway with:
-- Education sequence
-- Entry roles
-- Mid-level roles
-- Skills to build
-- Target employers
-- Certifications where relevant
-- Internship strategy
-- Salary progression when backed by credible current sources
+学生应该感受到自己是在选择人生和职业路径，而不是简单选一个 degree。
 
-The student should feel they are choosing a life and career pathway, not simply a degree.
+## 第四阶段：国家选择
+结合 Student Profile、职业方向和现实限制比较：
+- 学制
+- 预算
+- 就业市场
+- 行业机会
+- Post-study work
+- 移民考虑
+- 语言与文化适应
+- 排名与学校选择
+- 回国认可度
 
-## Stage 4: Country recommendation
+所有会变化的政策必须有来源和最后核验时间。
 
-Country fit is based on the Student Profile, career direction and constraints.
+## 第五阶段：国家、专业与学校推荐
+只在职业方向和国家分析完成后进入选校。
 
-Compare trade-offs such as:
-- Programme structure and duration
-- Budget
-- Employment market
-- Industry opportunities
-- Post-study work rules
-- Migration considerations
-- Language / cultural fit
-- Ranking options
+中文组合：
+- 冲刺
+- 主申
+- 保底
 
-Any changing rules must be source-backed and display provenance / last verified date.
-
-Country fit percentages, if shown, are heuristic fit scores, not statistical probabilities.
-
-## Stage 5: University and programme recommendations
-
-Only after career and country planning should the platform recommend programmes.
-
-Portfolio categories:
-- Reach
-- Target
-- Safe
-
-Recommended programme card dimensions can include:
+推荐卡可展示：
 - Academic fit
 - Career fit
 - Cost fit
@@ -156,219 +139,70 @@ Recommended programme card dimensions can include:
 - Overall recommendation
 - Admissions competitiveness
 
-Never present a fabricated exact acceptance probability. Use heuristic competitiveness labels or clearly labelled internal fit scores.
+不要展示虚假的精确录取概率。除非未来拥有经过验证的真实录取数据模型，否则只能展示启发式竞争力和 fit score。
 
-Every recommendation must explain WHY it is recommended.
+排名只是一个维度。系统必须解释 QS 排名、项目质量、雇主认可、城市、预算和职业匹配之间的 trade-off，而不是自动追求最高 QS。
 
-## Stage 6: Recommended application portfolio
+## 第六阶段：Recommended Application Portfolio
+AI 自动提出平衡的申请组合，例如 2 冲刺 + 4 主申 + 2 保底。学生可接受、修改或要求更激进/更保守/更低预算方案。接受后自动进入 Applications。
 
-AI proposes a balanced portfolio, for example:
-- 2 Reach
-- 4 Target
-- 2 Safe
+## 第七阶段：申请时间线
+根据项目截止时间和学生缺口生成依赖关系明确的 timeline，包括英语、CV、推荐人、文书、成绩单、学校表格、奖学金和提交时间。
 
-The student can Accept Recommendation, edit it, or request a different risk / budget strategy.
+## 第八阶段：Application Package
+每一个 programme 有独立申请包：CV、PS/SOP、Academic Statement、RL、Transcript、Passport、English Test、学校专属材料。
 
-Accepted programmes automatically become Application records.
+所有生成内容只能使用经过确认的 Student Profile 事实，不得虚构。
 
-## Stage 7: Application timeline
+## 第九阶段：Application Audit
+正式提交前检查：日期冲突、教育/工作经历矛盾、英语成绩过期、缺少材料、学校或专业名称错误、文书重复、未满足 requirement 等。
 
-Generate a dependency-aware timeline based on selected programmes and student gaps.
+目标状态：Application Ready。
 
-Tasks may include:
-- English preparation and test dates
-- CV preparation
-- Recommender selection
-- Personal statements / essays
-- Transcript requests
-- School-specific forms
-- Scholarship deadlines
-- Application submissions
+## Offer 与行前
+拿到 Offer 后，平台自动切换阶段，显示 Offer 条件、接受截止、押金、CoE/入学文件、签证、保险、住宿、机票、接机、银行、SIM 和 Orientation。
 
-Dashboard should show counts such as:
-- Applications
-- Ready
-- Missing documents
-- Not started
+## Career
+到达海外前后继续支持：实习策略、职位搜索、本地 CV、面试、Graduate Program、技能缺口和长期职业发展。
 
-## Stage 8: Application package
+## AI 顾问行为
+任何时候都要优先回答：
+1. 我现在是什么背景？
+2. 我最大的短板是什么？
+3. 我现在最应该做什么？
+4. 为什么这件事会影响我的目标？
 
-Each selected programme owns its own package, for example:
-- CV
-- Personal statement / SOP
-- Academic statement
-- Recommendation letters
-- Transcript
-- Passport
-- English test
-- Programme-specific requirements
+Dashboard 默认只强调最重要的 3 个下一步，而不是把所有任务同时扔给学生。
 
-Documents must be generated from verified Student Profile facts and school-specific requirements.
+## 动态重新规划
+IELTS、GPA、新实习、新项目、目标国家、预算或职业偏好发生变化后，系统应重新评估并解释“你的定位发生了什么变化”。
 
-Never invent achievements, dates, roles, grades, awards or experiences.
+## 中文网站信息架构
+主导航建议：
+- 首页 / 今日规划
+- 我的档案
+- 职业与专业方向
+- 背景提升计划
+- 国家与选校
+- 申请组合
+- 我的申请
+- Offer
+- 行前准备
+- 职业发展
 
-## Stage 9: CV generation
+英语、实习、技能、项目、文档等作为对应阶段的二级模块存在，而不是全部并列成一级菜单。
 
-Generate programme-specific CV versions from the same Student Profile.
+## 商业模式
+免费版：档案、基础背景诊断、基础职业方向建议、有限选校推荐。
+规划版：完整职业分析、国家对比、专业与选校组合、背景提升路线图。
+申请版：CV、文书、推荐信辅助、Application Package 和 Audit。
+Premium / Full Service：AI + 真人顾问、定校审核、文书修改、申请指导/代办、Offer 后与落地服务。
 
-Different programmes should emphasise different evidence rather than changing underlying facts.
-
-## Stage 10: Personal statements and essays
-
-Writing must incorporate:
-- Verified student evidence
-- Career direction
-- Programme curriculum and strengths
-- School-specific prompt
-- Future career goals
-
-Avoid generic reusable statements that could apply to any institution.
-
-## Stage 11: Recommendation letters
-
-Support recommender relationship types such as:
-- Professor / teacher
-- Manager
-- Internship supervisor
-- Research supervisor
-
-The system should change evidence emphasis based on relationship while never fabricating what the recommender has observed.
-
-## Stage 12: Application Audit
-
-Before submission, automatically check:
-- Date inconsistencies
-- Conflicting education / employment facts
-- Expiring English tests
-- Missing programme-specific documents
-- Wrong university or programme name
-- Excessive content duplication
-- Repeated wording across application materials
-- Requirements not yet satisfied
-
-Target state: Application Ready.
-
-## Stage 13: Submission and human counsellor layer
-
-Provide:
-- Complete materials
-- Checklist
-- Official application link
-- Deadline
-- Submission guidance
-
-Future business workflow can support:
-- Submit with counsellor
-- Human document review
-- Human application handling
-
-Students must approve consequential submissions and declarations.
-
-## Post-offer and pre-departure
-
-After an offer, the workspace should change phase and surface:
-- Offer conditions
-- Acceptance deadline
-- Deposit
-- CoE / equivalent enrolment documentation
-- Visa preparation
-- Insurance
-- Housing
-- Flights
-- Airport transfer
-- Bank setup
-- SIM
-- Orientation and arrival tasks
-
-Tasks should unlock based on dependencies rather than appearing as a generic checklist.
-
-## Career layer
-
-Before and after arrival, continue supporting:
-- Internship strategy
-- Job discovery
-- Local CV
-- Interview preparation
-- Graduate programmes
-- Skill gap analysis
-- Career progression
-
-## Advisor behaviour
-
-AI should always answer:
-1. Where am I now?
-2. What are my highest-impact gaps?
-3. What should I do next?
-4. Why does this action matter for my target pathway?
-
-The product should prioritise the top 3 next actions instead of overwhelming students with every possible task.
-
-## Dynamic replanning
-
-Any meaningful Student Profile change should be able to trigger reassessment.
-
-Examples:
-- IELTS 6.0 → 7.0
-- GPA 78 → 82
-- New internship added
-- New analytics project added
-- Target country changed
-
-The system should explain what changed in the student's positioning and update priorities, roadmap and programme recommendations.
-
-## Information architecture
-
-Primary navigation should reflect the journey rather than an arbitrary toolbox.
-
-Suggested structure:
-- Home / Today
-- Profile
-- Career Plan
-- Improvement Plan
-- Country & Programme Selection
-- Application Portfolio
-- Applications
-- Offers
-- Pre-departure
-- Career
-
-Secondary capabilities such as English, internships, skills, projects and documents should surface inside the relevant journey stage and can also have dedicated drill-down pages.
-
-## Commercial tiers
-
-Potential product model:
-
-Free
-- Profile
-- Basic assessment
-- Basic career guidance
-- Limited programme recommendations
-
-Planning
-- Full career analysis
-- Country comparison
-- Programme portfolio
-- Improvement roadmap
-
-Application
-- CV
-- Statements
-- Recommendation-letter assistance
-- Application package and audit
-
-Premium / Full Service
-- AI + human counsellor
-- School-selection review
-- Document review
-- Submission guidance / handling
-- Post-offer and relocation support
-
-## Non-negotiable product rules
-
-- StudentProfile is the system of record for student facts.
-- Do not ask for the same factual information repeatedly.
-- AI recommendations must explain their reasoning in user-facing language.
-- Current admissions, visa, work-rights, tuition, deadline and housing facts require source provenance and verification dates.
-- Never invent student facts or institutional requirements.
-- Admissions competitiveness must not be represented as an exact calibrated probability unless backed by real validated data.
-- The experience should feel like an active counsellor guiding the next decision, not a library of disconnected tools.
+## 不可妥协的规则
+- StudentProfile 是学生事实的唯一系统记录。
+- 同一个事实不要反复要求学生填写。
+- AI 推荐必须向学生解释为什么。
+- 招生要求、签证、工作权利、学费、截止日期和住宿等动态信息必须有来源和核验日期。
+- 永远不能编造学生经历或学校 requirement。
+- 不得把启发式录取竞争力包装成精确录取概率。
+- 整个体验必须像一个主动带着学生往前走的留学顾问，而不是一堆彼此割裂的工具。
