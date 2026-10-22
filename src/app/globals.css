@@ -4,22 +4,40 @@
 
 :root {
   color-scheme: light;
-  --background: 248 250 252;
-  --foreground: 15 23 42;
+  --ink: #17362f;
+  --muted: #6e7f7a;
+  --paper: #f7f5ef;
+  --panel: #fffdf8;
+  --line: #e7e5dc;
+  --brand: #2f6b5f;
+  --brand-dark: #214b43;
+  --mint: #dfeee8;
+  --sand: #eee8db;
+  --gold: #c8954a;
 }
 
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: rgb(var(--background));
-  color: rgb(var(--foreground));
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, textarea, select { font: inherit; }
+a { color: inherit; text-decoration: none; }
+::selection { background: #cfe5dd; color: #17362f; }
+
+.soft-grid {
+  background-image:
+    linear-gradient(rgba(47,107,95,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(47,107,95,.045) 1px, transparent 1px);
+  background-size: 34px 34px;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+.glass {
+  background: rgba(255,253,248,.78);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
